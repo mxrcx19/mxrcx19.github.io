@@ -16,7 +16,6 @@ body {
 }
 
 .screen {
-    display: none;
     text-align: center;
     width: 100%;
 }
@@ -29,6 +28,7 @@ body {
 }
 
 #startScreen {
+    display: none;
     width: 100vw;
     height: 100vh;
     background-color: #4caf50;
@@ -36,8 +36,13 @@ body {
 }
 
 #gameScreen {
+    display: none;
     width: 100vw;
     height: 100vh;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #startButton {
