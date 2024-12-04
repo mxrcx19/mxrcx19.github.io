@@ -8,20 +8,24 @@ body {
     height: 100vh;
     background-color: #f0f0f0;
 }
+
 .screen {
     display: none;
     text-align: center;
     width: 100%;
 }
+
 .visible {
     display: block;
 }
+
 #startScreen {
     background-color: #4caf50;
     color: white;
     padding: 20px;
     border-radius: 10px;
 }
+
 #startButton {
     margin-top: 20px;
     padding: 10px 20px;
@@ -31,6 +35,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
 #startButton:hover {
     background-color: #555;
 }
@@ -40,4 +45,3 @@ canvas {
     display: block; 
     margin: auto; 
 }
-
