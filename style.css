@@ -16,7 +16,6 @@ body {
 }
 
 .screen {
-    display: none;
     text-align: center;
     width: 100%;
 }
@@ -29,6 +28,7 @@ body {
 }
 
 #startScreen {
+    display: none;
     width: 100vw;
     height: 100vh;
     background-color: #4caf50;
