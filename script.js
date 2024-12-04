@@ -12,6 +12,12 @@ startButton.addEventListener('click', () => {
     startGame();
 });
 
+document.getElementById("startButton").addEventListener("click", function () {
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "flex";
+});
+
+
 
 const ball = { x: 200, y: 200, radius: 10, vx: 0, vy: 0 };
 function drawBall() {
