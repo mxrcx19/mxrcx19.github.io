@@ -35,6 +35,11 @@ body {
     color: white;
 }
 
+#gameScreen {
+    width: 100vw;
+    height: 100vh;
+}
+
 #startButton {
     margin-top: 20px;
     padding: 10px 20px;
