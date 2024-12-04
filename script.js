@@ -1,7 +1,19 @@
+// select elements
+const startScreen = document.getElementById('startScreen');
+const gameScreen = document.getElementById('gameScreen');
+const startButton = document.getElementById('startButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const ball = { x: 200, y: 200, radius: 10, vx: 0, vy: 0 };
 
+// Event-Listener for start-button
+startButton.addEventListener('click', () => {
+    startScreen.classList.remove('visible');
+    gameScreen.classList.add('visible');
+    startGame();
+});
+
+
+const ball = { x: 200, y: 200, radius: 10, vx: 0, vy: 0 };
 function drawBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
