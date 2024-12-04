@@ -22,7 +22,10 @@ body {
 }
 
 .visible {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #startScreen {
@@ -30,10 +33,6 @@ body {
     height: 100vh;
     background-color: #4caf50;
     color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 #startButton {
