@@ -7,8 +7,11 @@ const ctx = canvas.getContext('2d');
 
 // Event-Listener for start-button
 startButton.addEventListener('click', () => {
-    startScreen.classList.remove('visible');
-    gameScreen.classList.add('visible');
+    // Hide the start screen
+    document.getElementById("startScreen").style.display = "none";
+
+    // Show the game screen
+    document.getElementById("gameScreen").style.display = "flex";
     startGame();
 });
 
