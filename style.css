@@ -20,10 +20,14 @@ body {
 }
 
 #startScreen {
+    width: 100vw;
+    height: 100vh;
     background-color: #4caf50;
     color: white;
-    padding: 20px;
-    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #startButton {
