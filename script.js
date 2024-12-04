@@ -18,7 +18,7 @@ function drawBall() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-    ctx.fillStyle = "blue";
+    ctx.fillStyle = "red";
     ctx.fill();
     ctx.closePath();
 }
