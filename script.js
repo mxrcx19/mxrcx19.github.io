@@ -164,18 +164,13 @@ window.addEventListener('keydown', (e) => {
     updateBallPosition(ball, dx, dy)
 });
 
-let vx = 0, vy = 0;
-function handleMotion(event) {
-    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
-    updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
-    updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
-    const ax = event.accelerationIncludingGravity.x;
-    const ay = event.accelerationIncludingGravity.y;
-    //Low-Pass-Filter with 80% old speed and 20% new
-    vx = vx * 0.8 + ax * 0.2
-    vy = vy * 0.8 + ay * 0.2
-
-    updateBallPosition(ball, vx * 0.5, vy * -0.5)
+function isColliding(ball, wall) {
+    return (
+        ball.x + ball.radius >= wall.x &&
+        ball.x - ball.radius <= wall.x + wall.width &&
+        ball.y + ball.radius >= wall.y &&
+        ball.y - ball.radius <= wall.y + wall.height
+    );
 }
 
 function updateBallPosition(ball, dx, dy ) {
@@ -194,13 +189,18 @@ function updateBallPosition(ball, dx, dy ) {
     }
 }
 
-function isColliding(ball, wall) {
-    return (
-        ball.x + ball.radius >= wall.x &&
-        ball.x - ball.radius <= wall.x + wall.width &&
-        ball.y + ball.radius >= wall.y &&
-        ball.y - ball.radius <= wall.y + wall.height
-    );
+let vx = 0, vy = 0;
+function handleMotion(event) {
+    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
+    updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
+    updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
+    const ax = event.accelerationIncludingGravity.x;
+    const ay = event.accelerationIncludingGravity.y;
+    //Low-Pass-Filter with 80% old speed and 20% new
+    vx = vx * 0.8 + ax * 0.2
+    vy = vy * 0.8 + ay * 0.2
+
+    updateBallPosition(ball, vx * 0.5, vy * -0.5)
 }
 
 window.addEventListener('keyup', () => {
@@ -250,5 +250,3 @@ document.getElementById("startButton").addEventListener("click", function () {
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
 });
-
-gameLoop();
