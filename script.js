@@ -218,16 +218,34 @@ function gameLoop() {
 }
 
 // Event-Listener for start-button
+startButton.onclick = function(e) {
+    e.preventDefault();
+    startScreen.classList.remove('visible');
+    gameScreen.classList.add('visible');
+    if ( 
+        DeviceMotionEvent 
+        && typeof DeviceMotionEvent.requestPermission === "function"
+    ) {
+        DeviceMotionEvent.requestPermission();
+    }
+    window.addEventListener("devicemotion", handleMotion);
+    gameLoop();
+}
+/*
 startButton.addEventListener('click', () => {
     startScreen.classList.remove('visible');
     gameScreen.classList.add('visible');
-    if ( DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+    e.preventDefault();
+    if ( 
+        DeviceMotionEvent 
+        && typeof DeviceMotionEvent.requestPermission === "function"
+    ) {
         DeviceMotionEvent.requestPermission();
     }
     window.addEventListener("devicemotion", handleMotion);
     gameLoop();
 });
-
+*/
 document.getElementById("startButton").addEventListener("click", function () {
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
