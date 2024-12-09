@@ -203,9 +203,7 @@ function permission () {
             .then( response => {
             // (optional) Do something after API prompt dismissed.
             if ( response == "granted" ) {
-                window.addEventListener( "devicemotion", (e) => {
-                    // do something for 'e' here.
-                })
+                window.addEventListener( "devicemotion", handleMotion)
             }
         })
             .catch( console.error )
