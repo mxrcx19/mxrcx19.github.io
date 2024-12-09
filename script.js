@@ -5,22 +5,6 @@ const startButton = document.getElementById('startButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Event-Listener for start-button
-startButton.addEventListener('click', () => {
-    startScreen.classList.remove('visible');
-    gameScreen.classList.add('visible');
-    if ( DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        DeviceMotionEvent.requestPermission();
-    }
-    window.addEventListener("devicemotion", handleMotion);
-    gameLoop();
-});
-
-document.getElementById("startButton").addEventListener("click", function () {
-    document.getElementById("startScreen").style.display = "none";
-    document.getElementById("gameScreen").style.display = "flex";
-});
-
 const walls = [ //Breite der Wände mal auf 2
     { x: 0, y: 0, width: 4, height: 480 }, // Linke Wand vom Canvas
     { x: 0, y: 0, width: 480, height: 1 }, // Obere Wand vom Canvas
@@ -229,5 +213,21 @@ function gameLoop() {
 
     requestAnimationFrame(gameLoop); // Animations-Loop
 }
+
+// Event-Listener for start-button
+startButton.addEventListener('click', () => {
+    startScreen.classList.remove('visible');
+    gameScreen.classList.add('visible');
+    if ( DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+        DeviceMotionEvent.requestPermission();
+    }
+    window.addEventListener("devicemotion", handleMotion);
+    gameLoop();
+});
+
+document.getElementById("startButton").addEventListener("click", function () {
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "flex";
+});
 
 gameLoop();
