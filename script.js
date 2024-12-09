@@ -166,11 +166,14 @@ window.addEventListener('keydown', (e) => {
 
 let vx = 0, vy = 0;
 function handleMotion(event) {
+    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
+    updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
+    updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
     const ax = event.accelerationIncludingGravity.x;
     const ay = event.accelerationIncludingGravity.y;
-    //Low-Pass-Filter with 80% old speed and 2ß% new
+    //Low-Pass-Filter with 80% old speed and 20% new
     vx = vx * 0.8 + ax * 0.2
-    vy = vy * 0.8 + vy * 0.2
+    vy = vy * 0.8 + ay * 0.2
 
     updateBallPosition(ball, vx * 0.5, vy * -0.5)
 }
