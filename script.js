@@ -9,7 +9,10 @@ const ctx = canvas.getContext('2d');
 startButton.addEventListener('click', () => {
     startScreen.classList.remove('visible');
     gameScreen.classList.add('visible');
-    permission();
+    if ( DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+        DeviceMotionEvent.requestPermission();
+    }
+    window.addEventListener("devicemotion", handleMotion);
     gameLoop();
 });
 
@@ -176,48 +179,11 @@ window.addEventListener('keydown', (e) => {
 
     updateBallPosition(ball, dx, dy)
 });
-/*
-if(typeof DeviceMotionEvent !== "undefined") {
-    if (typeof DeviceMotionEvent.requestPermission === "function") {
-        //iOS: Ask for permission
-        DeviceMotionEvent.requestPermission()
-            .then(permissionState => {
-                if (permissionState === "granted") {
-                    window.addEventListener("devicemotion", handleMotion);
-                } else {
-                    alert("Bewegungssensor-Zugriff wurde verweigert.");
-                }
-            })
-            .catch(console.error)
-    } else {
-        window.addEventListener("devicemotion", handleMotion);
-    }
-} else {
-    alert("Dein Gerät unterstützt die Bewegungssensor-API nicht.");
-}
-*/
-function permission () {
-    if ( typeof( DeviceMotionEvent ) !== "undefined" && typeof( DeviceMotionEvent.requestPermission ) === "function" ) {
-        // (optional) Do something before API request prompt.
-        DeviceMotionEvent.requestPermission()
-            .then( response => {
-            // (optional) Do something after API prompt dismissed.
-            if ( response == "granted" ) {
-                window.addEventListener( "devicemotion", handleMotion)
-            }
-        })
-            .catch( console.error )
-    } else {
-        alert( "DeviceMotionEvent is not defined" );
-    }
-}
 
 let vx = 0, vy = 0;
 function handleMotion(event) {
-    const acceleration = event.accelerationIncludingGravity;
-
-    const ax = acceleration.x;
-    const ay = acceleration.y;
+    const ax = event.accelerationIncludingGravity.x;
+    const ay = event.accelerationIncludingGravity.y;
     //Low-Pass-Filter with 80% old speed and 2ß% new
     vx = vx * 0.8 + ax * 0.2
     vy = vy * 0.8 + vy * 0.2
