@@ -16,6 +16,7 @@ document.getElementById("startButton").addEventListener("click", function () {
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
 });
+
 const walls = [ //Breite der Wände mal auf 2
     { x: 0, y: 0, width: 4, height: 480 }, // Linke Wand vom Canvas
     { x: 0, y: 0, width: 480, height: 1 }, // Obere Wand vom Canvas
@@ -174,6 +175,42 @@ window.addEventListener('keydown', (e) => {
 
     updateBallPosition(ball, dx, dy)
 });
+
+if(typeof DeviceMotionEvent !== "undefined") {
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+        //iOS: Ask for permission
+        DeviceMotionEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === "granted") {
+                    window.addEventListener("devicemotion", handleMotion);
+                } else {
+                    alert("Bewegungssensor-Zugriff wurde verweigert.");
+                }
+            })
+            .catch(console.error)
+    } else {
+        window.addEventListener("devicemotion", handleMotion);
+    }
+} else {
+    alert("Dein Gerät unterstützt die Bewegungssensor-API nicht.");
+}
+
+
+
+window.addEventListener('devicemotion', handleMotion);
+
+let vx = 0, vy = 0;
+function handleMotion(event) {
+    const acceleration = event.accelerationIncludingGravity;
+
+    const ax = acceleration.x;
+    const ay = acceleration.y;
+    //Low-Pass-Filter with 80% old speed and 2ß% new
+    vx = vx * 0.8 + ax * 0.2
+    vy = vy * 0.8 + vy * 0.2
+
+    updateBallPosition(ball, vx * 0.5, vy * -0.5)
+}
 
 function updateBallPosition(ball, dx, dy ) {
     const newX = ball.x + dx;
