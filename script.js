@@ -195,10 +195,6 @@ if(typeof DeviceMotionEvent !== "undefined") {
     alert("Dein Gerät unterstützt die Bewegungssensor-API nicht.");
 }
 
-
-
-window.addEventListener('devicemotion', handleMotion);
-
 let vx = 0, vy = 0;
 function handleMotion(event) {
     const acceleration = event.accelerationIncludingGravity;
