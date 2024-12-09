@@ -175,7 +175,7 @@ window.addEventListener('keydown', (e) => {
 
     updateBallPosition(ball, dx, dy)
 });
-
+/*
 if(typeof DeviceMotionEvent !== "undefined") {
     if (typeof DeviceMotionEvent.requestPermission === "function") {
         //iOS: Ask for permission
@@ -193,6 +193,22 @@ if(typeof DeviceMotionEvent !== "undefined") {
     }
 } else {
     alert("Dein Gerät unterstützt die Bewegungssensor-API nicht.");
+}
+*/
+if ( typeof( DeviceMotionEvent ) !== "undefined" && typeof( DeviceMotionEvent.requestPermission ) === "function" ) {
+    // (optional) Do something before API request prompt.
+    DeviceMotionEvent.requestPermission()
+        .then( response => {
+        // (optional) Do something after API prompt dismissed.
+        if ( response == "granted" ) {
+            window.addEventListener( "devicemotion", (e) => {
+                // do something for 'e' here.
+            })
+        }
+    })
+        .catch( console.error )
+} else {
+    alert( "DeviceMotionEvent is not defined" );
 }
 
 let vx = 0, vy = 0;
