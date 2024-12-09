@@ -134,6 +134,10 @@ const walls = [ //Breite der Wände mal auf 2
     { x: 450, y: 364, width: 30, height: 2 },
 ];
 
+function updateFieldIfNotNull(fieldName, value, precision=10){
+    if (value != null)
+    document.getElementById(fieldName).innerHTML = value.toFixed(precision);
+}
 
 function drawWalls(ctx) {
     ctx.fillStyle = "black";
