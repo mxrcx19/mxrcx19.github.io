@@ -142,7 +142,7 @@ function drawWalls(ctx) {
     });
 }
 
-const ball = { x: 12, y: 7, radius: 6, vx: 0, vy: 0 };
+const ball = { x: 15, y: 10, radius: 6, vx: 0, vy: 0 };
 function drawBall() {
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
