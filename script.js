@@ -133,12 +133,12 @@ const walls = [ //Breite der Wände mal auf 2
     { x: 450, y: 214, width: 30, height: 2 },
     { x: 450, y: 364, width: 30, height: 2 },
 ];
-
+/*
 function updateFieldIfNotNull(fieldName, value, precision=10){
     if (value != null)
     document.getElementById(fieldName).innerHTML = value.toFixed(precision);
 }
-
+*/
 function drawWalls(ctx) {
     ctx.fillStyle = "black";
     walls.forEach(wall => {
@@ -195,9 +195,9 @@ function updateBallPosition(ball, dx, dy ) {
 
 let vx = 0, vy = 0;
 function handleMotion(event) {
-    updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
-    updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
-    updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
+   //updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
+    //updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
+    //updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
     const ax = event.accelerationIncludingGravity.x;
     const ay = event.accelerationIncludingGravity.y;
     //Low-Pass-Filter with 80% old speed and 20% new
