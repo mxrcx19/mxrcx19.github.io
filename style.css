@@ -13,6 +13,10 @@ body {
     background-color: #f0f0f0;
 }
 
+ul {
+    list-style: none;
+}
+
 .screen {
     display: none;
     text-align: center;
@@ -62,5 +66,24 @@ body {
 canvas { 
     border: 2px solid black;
     display: block; 
-    margin: auto; 
+    margin: 0;
+    padding: 0; 
+}
+
+#topBar {
+    display: flex;              /* Elemente nebeneinander ausrichten */
+    justify-content: space-between; /* Platz zwischen den Elementen ausgleichen */
+    align-items: center;        /* Vertikal zentrieren */
+    width: 400px;               /* Gleiche Breite wie das Canvas */
+}
+
+#timer {
+    font-size: 18px;            /* Schriftgröße des Timers */
+    font-weight: bold;          /* Fettgedruckter Timer */
+}
+
+#playPauseButton {
+    padding: 5px 10px;          /* Platz im Button */
+    font-size: 16px;            /* Schriftgröße */
+    cursor: pointer;            /* Mauszeiger als Klicksymbol */
 }

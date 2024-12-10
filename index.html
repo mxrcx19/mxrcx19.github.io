@@ -7,15 +7,25 @@
     <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 <body>
-    <!-- Startbildschirm -->
+    <!-- Startscreen -->
     <div id="startScreen" class="screen visible">
         <h1>Willkommen beim Kugellabyrinth</h1>
+        <h2>Spielregeln</h2>
+        <ul>
+            <li>Die Kugel wird durch die Neigung vom Smartphone oder Tablet gesteuert. Am Desktop über die Pfeiltasten</li>
+            <li>Zuerst müssen alle Münzen eingesammelt werden, damit das Ziel angezeigt wird</li>
+            <li>Wenn der Spieler das Ziel erreicht ist das Spiel zu Ende</li>
+        </ul>
         <p>Klicke auf den Button, um zu starten!</p>
         <button id="startButton">Spiel starten</button>
     </div>
 
-    <!-- Spielfeld -->
+    <!-- Labyrinth -->
     <div id="gameScreen" class="screen">
+        <div id="topBar">
+            <p>Timer: <span id="timer">180</span></p>
+            <button id="playPauseButton">Pause</button>
+        </div>
         <canvas id="gameCanvas" width="480" height="480"></canvas>
     </div>
     <script src="./script.js"></script>

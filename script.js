@@ -5,12 +5,18 @@ const startButton = document.getElementById('startButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const walls = [ //Breite der Wände mal auf 2
-    { x: 0, y: 0, width: 4, height: 480 }, // Linke Wand vom Canvas
-    { x: 0, y: 0, width: 480, height: 1 }, // Obere Wand vom Canvas
-    { x: 476, y: 0, width: 4, height: 456 }, // Rechte Wand vom Canvas
-    { x: 0, y: 476, width: 480, height: 4 }, // Untere Wand vom Canvas
-    //Labyrinthwände
+const spawnpoint = { x: 16, y: 10}
+const ball = { x: spawnpoint.x, y: spawnpoint.y, radius: 6, vx: 0, vy: 0 };
+
+const goal = { x: 476, y: 456, width: 20, height: 20};
+
+//array of all walls
+const walls = [
+    { x: 0, y: 0, width: 4, height: 480 }, // left wall of canvas
+    { x: 0, y: 0, width: 480, height: 1 }, // upper wall of canvas
+    { x: 476, y: 0, width: 4, height: 456 }, // right wall of canvas
+    { x: 0, y: 476, width: 480, height: 4 }, // lower wall of canvas
+    //walls in the labyrinth
     { x: 30, y: 1, width: 480, height: 4 },
     { x: 30, y: 34, width: 60, height: 2 },
     { x: 30, y: 34, width: 2, height: 30 },
@@ -85,7 +91,6 @@ const walls = [ //Breite der Wände mal auf 2
     { x: 300, y: 34, width: 2, height: 180 },
     { x: 300, y: 274, width: 2, height: 30 },
     { x: 300, y: 334, width: 2, height: 120 },
-    { x: 300, y: 124, width: 30, height: 2 },
     { x: 300, y: 364, width: 90, height: 2 },
     { x: 300, y: 454, width: 30, height: 2 },
     { x: 330, y: 4, width: 2, height: 30 },
@@ -133,12 +138,44 @@ const walls = [ //Breite der Wände mal auf 2
     { x: 450, y: 214, width: 30, height: 2 },
     { x: 450, y: 364, width: 30, height: 2 },
 ];
-/*
-function updateFieldIfNotNull(fieldName, value, precision=10){
-    if (value != null)
-    document.getElementById(fieldName).innerHTML = value.toFixed(precision);
-}
-*/
+
+let allCoinsCollected = false
+
+//array of all coins in the labyrinth
+const coins = [
+    {x: 136, y: 20, radius: 7, collected: false},
+    {x: 346, y: 20, radius: 7, collected: false},
+    {x: 46, y: 80, radius: 7, collected: false},
+    {x: 136, y: 110, radius: 7, collected: false},
+    {x: 436, y: 110, radius: 7, collected: false},
+    {x:76, y: 140, radius: 7, collected: false},
+    {x:346, y: 140, radius: 7, collected: false},
+    {x:76, y: 230, radius: 7, collected: false},
+    {x:226, y: 230, radius: 7, collected: false},
+    {x:166, y: 260, radius: 7, collected: false},
+    {x:406, y: 260, radius: 7, collected: false},
+    {x:376, y: 350, radius: 7, collected: false},
+    {x: 16, y: 382, radius: 7, collected: false},
+    {x: 256, y: 382, radius: 7, collected: false},
+    {x: 376, y: 410, radius: 7, collected: false},
+    {x: 436, y: 410, radius: 7, collected: false},
+    {x: 76, y: 467, radius: 7, collected: false},
+    {x: 106, y: 467, radius: 7, collected: false}
+];
+
+//array of all traps in the labyrinth
+const traps = [
+    {x: 406, y: 20, radius: 11},
+    {x: 226, y: 50, radius: 11},
+    {x: 465, y: 110, radius: 11},
+    {x: 226, y: 170, radius: 11},
+    {x: 76, y: 380, radius: 11},
+    {x: 346, y: 410, radius: 11},
+    {x: 465, y: 410, radius: 11},
+    {x: 436, y: 440, radius: 11},
+    {x: 286, y: 465, radius: 11},
+];
+
 function drawWalls(ctx) {
     ctx.fillStyle = "black";
     walls.forEach(wall => {
@@ -146,7 +183,65 @@ function drawWalls(ctx) {
     });
 }
 
-const ball = { x: 15, y: 10, radius: 6, vx: 0, vy: 0 };
+function drawCoins(ctx) {
+    coins.forEach(coin => {
+        if (!coin.collected) {
+            //draw black outline
+            ctx.beginPath();
+            ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "black";
+            ctx.fill();
+            ctx.closePath();
+
+            //draw golden filling
+            ctx.beginPath();
+            ctx.arc(coin.x, coin.y, coin.radius - 2, 0, Math.PI * 2);
+            ctx.fillStyle = "gold";
+            ctx.fill();
+            ctx.closePath();
+
+            //draw black line in middle
+            ctx.beginPath();
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 1;
+            ctx.moveTo(coin.x, coin.y - (coin.radius - 4)); //
+            ctx.lineTo(coin.x, coin.y + (coin.radius - 4)); //
+            ctx.stroke();
+            ctx.closePath();
+        }
+    });
+}
+
+function drawTraps(ctx) {
+    traps.forEach(trap => {
+        //draw black outline
+        ctx.beginPath();
+        ctx.arc(trap.x, trap.y, trap.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "black";
+        ctx.fill();
+        ctx.closePath();
+
+        //purple filling
+        ctx.beginPath();
+        ctx.arc(trap.x, trap.y, trap.radius - 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#6B3FA0";
+        ctx.fill();
+        ctx.closePath();
+    })
+    
+}
+
+//draw the goal green if all coins got collected, otherwise black and therefore invisible
+function drawGoal(ctx) {
+    if (allCoinsCollected) {
+        ctx.fillStyle = "#00F700"
+    } else {
+        ctx.fillStyle = "black"
+    }
+    ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+}
+
+//draw the red ball
 function drawBall() {
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
@@ -155,8 +250,7 @@ function drawBall() {
     ctx.closePath();
 }
 
-// Simulate movement with arrow keys
-window.addEventListener('keydown', (e) => {
+function handleKeyPress(e) {
     let dx = 0, dy = 0;
     const speed = 2;
 
@@ -166,9 +260,12 @@ window.addEventListener('keydown', (e) => {
     if (e.key === "ArrowRight") dx = speed;
 
     updateBallPosition(ball, dx, dy)
-});
+}
+// Simulate movement with arrow keys
+window.addEventListener('keydown', handleKeyPress);
 
-function isColliding(ball, wall) {
+//function to check whether ball and wall collide
+function checkWallCollision(ball, wall) {
     return (
         ball.x + ball.radius >= wall.x &&
         ball.x - ball.radius <= wall.x + wall.width &&
@@ -177,30 +274,86 @@ function isColliding(ball, wall) {
     );
 }
 
+//check if all coins got collected to unlock goal
+function checkAllCoinsCollected() {
+    allCoinsCollected = coins.every(coin => coin.collected);
+    if (allCoinsCollected) {
+        console.log("Alle Coins eingesammelt! Ziel wird sichtbar.");
+    }
+}
+
+//check if new ball position is colliding with a wall
+function checkCoinCollision(ball) {
+    coins.forEach(coin => {
+        if (!coin.collected) { // Nur nicht gesammelte Coins prüfen
+            const distX = ball.x - coin.x;
+            const distY = ball.y - coin.y;
+            const distance = Math.sqrt(distX * distX + distY * distY);
+
+            if (distance < ball.radius + coin.radius) {
+                coin.collected = true; // Coin als gesammelt markieren
+                checkAllCoinsCollected(); // Prüfen, ob alle Coins eingesammelt wurden
+            }
+        }
+    });
+}
+
+//check if the ball falls into a trap
+function checkTrapCollision(ball, trap) {
+    const distX = ball.x - trap.x;
+    const distY = ball.y - trap.y;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    return (distance <= trap.radius);
+}
+
+//updates ball position depending on input and position
 function updateBallPosition(ball, dx, dy ) {
     const newX = ball.x + dx;
     const newY = ball.y + dy;
 
-    let collision = false
-    walls.forEach(wall => {
-        if (isColliding({ x: newX, y: newY, radius: ball.radius }, wall)) {
-            collision = true;
+    let collisionX = false;
+    let collisionY = false;
+
+    //Iterate over all walls to check for collision
+    for (const wall of walls) {
+        //check if moving along x-axis is blocked by wall
+        if (checkWallCollision({ x: newX, y: ball.y, radius: ball.radius }, wall)) {
+            collisionX = true;
         }
-    });
-    if (!collision) {
+        //check if moving along y-axis is blocked by wall
+        if (checkWallCollision({ x: ball.x, y: newY, radius: ball.radius }, wall)) {
+            collisionY = true;
+        }
+
+        // Breche die Schleife ab, wenn beide Kollisionen erkannt wurden
+        if (collisionX && collisionY) {
+            break;
+        }
+    }
+
+    // Bewege den Ball nur, wenn keine Kollision erkannt wurde
+    if (!collisionX) {
         ball.x = newX;
+    }
+    if (!collisionY) {
         ball.y = newY;
     }
+
+    traps.forEach(trap => {
+        if (checkTrapCollision(ball, trap)) {
+            ball.x = spawnpoint.x;
+            ball.y = spawnpoint.y;
+        }
+    })
 }
 
 let vx = 0, vy = 0;
+//take inputs from accelerometer and calculate new position of the ball
 function handleMotion(event) {
-   //updateFieldIfNotNull('Accelerometer_gx', event.accelerationIncludingGravity.x);
-    //updateFieldIfNotNull('Accelerometer_gy', event.accelerationIncludingGravity.y);
-    //updateFieldIfNotNull('Accelerometer_gz', event.accelerationIncludingGravity.z);
     const ax = event.accelerationIncludingGravity.x;
     const ay = event.accelerationIncludingGravity.y;
-    //Low-Pass-Filter with 80% old speed and 20% new
+    //Low-Pass-Filter
     vx = vx * 0.8 + ax * 0.2
     vy = vy * 0.8 + ay * 0.2
 
@@ -213,17 +366,41 @@ window.addEventListener('keyup', () => {
 });
 
 function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Canvas löschen
-
-    drawWalls(ctx); // Wände zeichnen
-    drawBall();  // Kugel zeichnen
+    //update canvas by deleting and redrawing the elements
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawWalls(ctx);
+    checkCoinCollision(ball);
+    drawCoins(ctx);
+    drawTraps(ctx);
+    drawGoal(ctx);
+    drawBall();
 
     requestAnimationFrame(gameLoop); // Animations-Loop
 }
 
-// Event-Listener for start-button
+
+
+let timer = 180; //seconds
+//function starts timer and counts down the seconds
+function startTimer() {
+    const interval = setInterval(() => {
+        if (isRunning) {
+            timer--;
+            let timerElement = document.getElementById("timer");
+            timerElement.innerHTML = timer;
+            //if time is over, display alert
+            if (timer <= 0) {
+            clearInterval(interval);
+            alert('Zeit abgelaufen! Versuch es noch einmal.');
+            }
+        }
+    }, 1000);
+}
+
+// changes screen to labyrinth, starts eventlistener for accelerometer and starts game
 startButton.onclick = function(e) {
     e.preventDefault();
+
     startScreen.classList.remove('visible');
     gameScreen.classList.add('visible');
     if ( 
@@ -233,24 +410,74 @@ startButton.onclick = function(e) {
         DeviceMotionEvent.requestPermission();
     }
     window.addEventListener("devicemotion", handleMotion);
+    startTimer();
     gameLoop();
 }
-/*
-startButton.addEventListener('click', () => {
-    startScreen.classList.remove('visible');
-    gameScreen.classList.add('visible');
-    e.preventDefault();
-    if ( 
-        DeviceMotionEvent 
-        && typeof DeviceMotionEvent.requestPermission === "function"
-    ) {
-        DeviceMotionEvent.requestPermission();
-    }
-    window.addEventListener("devicemotion", handleMotion);
-    gameLoop();
-});
-*/
+
+
 document.getElementById("startButton").addEventListener("click", function () {
     document.getElementById("startScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "flex";
 });
+
+let isRunning = true;
+let playPauseButton = document.getElementById("playPauseButton");
+playPauseButton.onclick = function(e) {
+    e.preventDefault();
+
+    if (isRunning) {
+        window.removeEventListener("devicemotion", handleMotion);
+        window.removeEventListener('keydown', handleKeyPress);
+        playPauseButton.innerHTML = "Weiter";
+        isRunning = false;
+    } else {
+        window.addEventListener("devicemotion", handleMotion);
+        window.addEventListener('keydown', handleKeyPress);
+        playPauseButton.innerHTML = "Pause";
+        isRunning = true;
+    }
+}
+
+// Set canvas size to match screen size
+function resizeCanvas() {
+    if (window.innerWidth < 480) {
+        canvas.width = window.innerWidth - 10 ;
+        canvas.height = canvas.width;
+
+        //adjust size of gameobjects
+        adjustGameObjects();
+    }
+}
+
+// adjust size of game objects according to canvas size
+function adjustGameObjects() {
+    const adjustingFactor = (canvas.width / 480)
+    walls.forEach(wall => {
+        wall.x = wall.x * adjustingFactor;
+        wall.y = wall.y * adjustingFactor;
+        if (wall.width == 2) {
+            wall.height = wall.height * adjustingFactor;
+        } else if (wall.height == 2) {
+            wall.width = wall.width * adjustingFactor;
+        }
+    });
+
+    coins.forEach(coin => {
+        coin.x = coin.x * adjustingFactor;
+        coin.y = coin.y * adjustingFactor;
+        coin.radius = coin.radius * adjustingFactor;
+    });
+
+    traps.forEach(trap => {
+        trap.x = trap.x * adjustingFactor;
+        trap.y = trap.y * adjustingFactor;
+        trap.radius = trap.radius * adjustingFactor;
+    })
+
+    ball.x = spawnpoint.x * (canvas.width / 480);
+    ball.y = spawnpoint.y * (canvas.height / 480);
+}
+
+// call the function when loading and when window gets resized
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
