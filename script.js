@@ -306,7 +306,6 @@ function checkCoinCollision(ball) {
                 })
                 if (counter == 0) {
                     allCoinsCollected = true;
-                    drawGoal(ctx);
                 }
                 coinCountElement.innerHTML = counter
             }
@@ -388,7 +387,6 @@ function gameLoop() {
     checkCoinCollision(ball);
     drawCoins(ctx);
     drawTraps(ctx);
-    //checkAllCoinsCollected();
     drawGoal(ctx);
     drawBall();
 
@@ -480,8 +478,12 @@ function adjustGameObjects() {
         trap.radius = trap.radius * adjustingFactor;
     })
 
-    ball.x = spawnpoint.x * (canvas.width / 480);
-    ball.y = spawnpoint.y * (canvas.height / 480);
+    goal.x = goal.x * adjustingFactor;
+    goal.y = goal.y * adjustingFactor;
+    goal.radius = goal.radius * adjustingFactor;
+
+    ball.x = spawnpoint.x * adjustingFactor;
+    ball.y = spawnpoint.y * adjustingFactor;
 }
 
 // Set canvas size to match screen size
