@@ -293,7 +293,14 @@ function checkCoinCollision(ball) {
 
             if (distance < ball.radius + coin.radius) {
                 coin.collected = true;
-                checkAllCoinsCollected();
+                let coinCountElement = document.getElementById("coinCounter");
+                let counter = 0;
+                coins.forEach(coin => {
+                    if (coin.collected == false) {
+                        counter++;
+                    }
+                })
+                coinCountElement.innerHTML = counter
             }
         }
     });
@@ -373,6 +380,7 @@ function gameLoop() {
     checkCoinCollision(ball);
     drawCoins(ctx);
     drawTraps(ctx);
+    checkAllCoinsCollected();
     drawGoal(ctx);
     drawBall();
 
