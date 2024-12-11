@@ -8,7 +8,7 @@ const ctx = canvas.getContext('2d');
 const spawnpoint = { x: 16, y: 10}
 const ball = { x: spawnpoint.x, y: spawnpoint.y, radius: 6, vx: 0, vy: 0 };
 
-const goal = { x: 476, y: 456, width: 20, height: 20};
+const goal = { x: 465, y: 466, radius: 10};
 
 //array of all walls
 const walls = [
@@ -172,7 +172,7 @@ const traps = [
     {x: 76, y: 380, radius: 11},
     {x: 346, y: 410, radius: 11},
     {x: 465, y: 410, radius: 11},
-    {x: 436, y: 440, radius: 11},
+    {x: 376, y: 440, radius: 11},
     {x: 286, y: 465, radius: 11},
 ];
 
@@ -234,11 +234,12 @@ function drawTraps(ctx) {
 //draw the goal green if all coins got collected, otherwise black and therefore invisible
 function drawGoal(ctx) {
     if (allCoinsCollected) {
-        ctx.fillStyle = "#00F700"
-    } else {
-        ctx.fillStyle = "black"
+        ctx.beginPath();
+        ctx.arc(goal.x, goal.y, goal.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#00F700";
+        ctx.fill();
+        ctx.closePath();
     }
-    ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
 }
 
 //draw the red ball
@@ -252,7 +253,7 @@ function drawBall() {
 
 function handleKeyPress(e) {
     let dx = 0, dy = 0;
-    const speed = 2;
+    const speed = 8;
 
     if (e.key === "ArrowUp") dy = -speed;
     if (e.key === "ArrowDown") dy = speed;
@@ -285,14 +286,14 @@ function checkAllCoinsCollected() {
 //check if new ball position is colliding with a wall
 function checkCoinCollision(ball) {
     coins.forEach(coin => {
-        if (!coin.collected) { // Nur nicht gesammelte Coins prüfen
+        if (!coin.collected) {
             const distX = ball.x - coin.x;
             const distY = ball.y - coin.y;
             const distance = Math.sqrt(distX * distX + distY * distY);
 
             if (distance < ball.radius + coin.radius) {
-                coin.collected = true; // Coin als gesammelt markieren
-                checkAllCoinsCollected(); // Prüfen, ob alle Coins eingesammelt wurden
+                coin.collected = true;
+                checkAllCoinsCollected();
             }
         }
     });
