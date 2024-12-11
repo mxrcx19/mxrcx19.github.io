@@ -1,11 +1,13 @@
 // select elements
 const startScreen = document.getElementById('startScreen');
 const gameScreen = document.getElementById('gameScreen');
+const goalScreen = document.getElementById('goalScreen')
 const startButton = document.getElementById('startButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const spawnpoint = { x: 16, y: 10}
+
 const ball = { x: spawnpoint.x, y: spawnpoint.y, radius: 6, vx: 0, vy: 0 };
 
 const goal = { x: 465, y: 466, radius: 10};
@@ -143,9 +145,6 @@ let allCoinsCollected = false
 
 //array of all coins in the labyrinth
 const coins = [
-    {x: 16, y: 50, radius: 7, collected: false},
-    {x: 16, y: 70, radius: 7, collected: false}
-    /*
     {x: 136, y: 20, radius: 7, collected: false},
     {x: 346, y: 20, radius: 7, collected: false},
     {x: 46, y: 80, radius: 7, collected: false},
@@ -157,6 +156,7 @@ const coins = [
     {x:226, y: 230, radius: 7, collected: false},
     {x:166, y: 260, radius: 7, collected: false},
     {x:406, y: 260, radius: 7, collected: false},
+    {x:76, y: 350, radius: 7, collected: false},
     {x:376, y: 350, radius: 7, collected: false},
     {x: 16, y: 382, radius: 7, collected: false},
     {x: 256, y: 382, radius: 7, collected: false},
@@ -164,7 +164,6 @@ const coins = [
     {x: 436, y: 410, radius: 7, collected: false},
     {x: 76, y: 467, radius: 7, collected: false},
     {x: 106, y: 467, radius: 7, collected: false}
-    */
 ];
 
 //array of all traps in the labyrinth
@@ -276,37 +275,40 @@ function checkWallCollision(ball, wall) {
         ball.y - ball.radius <= wall.y + wall.height
     );
 }
-/*
-//check if all coins got collected to unlock goal
-function checkAllCoinsCollected() {
-    allCoinsCollected = coins.every(coin => coin.collected);
-    if (allCoinsCollected) {
-        console.log("Alle Coins eingesammelt! Ziel wird sichtbar.");
+
+//updates the coinCounter
+function updateCoinCount() {
+    let coinCountElement = document.getElementById("coinCounter");
+    let counter = 0;
+    //count every coin not collected yet
+    coins.forEach(coin => {
+        if (coin.collected == false) {
+            counter++;
+        }
+    })
+    //if all coins are collected set allCoinsCollected true and draw the goal
+    if (counter == 0) {
+        allCoinsCollected = true;
+        drawGoal(ctx);
     }
+    //update counter in document
+    coinCountElement.innerHTML = counter
 }
-*/
+
+
 //check if new ball position is colliding with a wall
 function checkCoinCollision(ball) {
     coins.forEach(coin => {
+        //check the distance for every coin
         if (!coin.collected) {
             const distX = ball.x - coin.x;
             const distY = ball.y - coin.y;
             const distance = Math.sqrt(distX * distX + distY * distY);
 
+            //if ball touches coin, set collected to true and update the coin-count
             if (distance < ball.radius + coin.radius) {
                 coin.collected = true;
-                let coinCountElement = document.getElementById("coinCounter");
-                let counter = 0;
-                coins.forEach(coin => {
-                    if (coin.collected == false) {
-                        counter++;
-                    }
-                })
-                if (counter == 0) {
-                    allCoinsCollected = true;
-                    drawGoal(ctx);
-                }
-                coinCountElement.innerHTML = counter
+                updateCoinCount();
             }
         }
     });
@@ -319,6 +321,15 @@ function checkTrapCollision(ball, trap) {
     const distance = Math.sqrt(distX * distX + distY * distY);
 
     return (distance <= trap.radius);
+}
+
+//check if the ball touches the goal
+function checkGoalCollision() {
+    const distX = ball.x - goal.x;
+    const distY = ball.y - goal.y;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    return (distance <= goal.radius);
 }
 
 //updates ball position depending on input and position
@@ -354,17 +365,29 @@ function updateBallPosition(ball, dx, dy ) {
         ball.y = newY;
     }
 
+    //check if ball fell into a trap
     traps.forEach(trap => {
         if (checkTrapCollision(ball, trap)) {
             ball.x = spawnpoint.x;
             ball.y = spawnpoint.y;
         }
     })
+
+    //if all coins are collected and ball touches goal, then change screen to goalScreen
+    if (allCoinsCollected) {
+        if (checkGoalCollision()) {
+            gameScreen.classList.remove('visible');
+            goalScreen.classList.add('visible');
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("goalScreen").style.display = "flex";
+        }
+    }
 }
 
 let vx = 0, vy = 0;
 //take inputs from accelerometer and calculate new position of the ball
 function handleMotion(event) {
+    //read-only x and y values of the accelerometer
     const ax = event.accelerationIncludingGravity.x;
     const ay = event.accelerationIncludingGravity.y;
     //Low-Pass-Filter
@@ -417,24 +440,25 @@ function startTimer() {
 startButton.onclick = function(e) {
     e.preventDefault();
 
+    //change screen from startScreen to gameScreen
     startScreen.classList.remove('visible');
     gameScreen.classList.add('visible');
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "flex";
+
+    //Ask for permission for iOS 13+ devices
     if ( 
         DeviceMotionEvent 
         && typeof DeviceMotionEvent.requestPermission === "function"
     ) {
         DeviceMotionEvent.requestPermission();
     }
+    //add event-listener for accelerometer, start timer and game
     window.addEventListener("devicemotion", handleMotion);
     startTimer();
     gameLoop();
 }
 
-
-document.getElementById("startButton").addEventListener("click", function () {
-    document.getElementById("startScreen").style.display = "none";
-    document.getElementById("gameScreen").style.display = "flex";
-});
 
 let isRunning = true;
 let playPauseButton = document.getElementById("playPauseButton");
@@ -442,11 +466,13 @@ playPauseButton.onclick = function(e) {
     e.preventDefault();
 
     if (isRunning) {
+        //if game is running, remove event-listeners to prevent movement of the ball, change wording of button and set isRunning to false
         window.removeEventListener("devicemotion", handleMotion);
         window.removeEventListener('keydown', handleKeyPress);
         playPauseButton.innerHTML = "Weiter";
         isRunning = false;
     } else {
+        //otherwise, add event-listeners to enable movement of the ball, change wording of the button and set isRunning to true
         window.addEventListener("devicemotion", handleMotion);
         window.addEventListener('keydown', handleKeyPress);
         playPauseButton.innerHTML = "Pause";
@@ -456,10 +482,13 @@ playPauseButton.onclick = function(e) {
 
 // adjust size of game objects according to canvas size
 function adjustGameObjects() {
+    //calculate factor depending on canvas width
     const adjustingFactor = (canvas.width / 480)
     walls.forEach(wall => {
+        //update x- and y-coordinates for each wall according to factor
         wall.x = wall.x * adjustingFactor;
         wall.y = wall.y * adjustingFactor;
+        //update width or height for each wall according to factor, depending on whether wall is placed horizontally or vertically
         if (wall.width == 2) {
             wall.height = wall.height * adjustingFactor;
         } else if (wall.height == 2) {
@@ -467,22 +496,26 @@ function adjustGameObjects() {
         }
     });
 
+    //update x-, y-coordinates and radius for each coin according to factor
     coins.forEach(coin => {
         coin.x = coin.x * adjustingFactor;
         coin.y = coin.y * adjustingFactor;
         coin.radius = coin.radius * adjustingFactor;
     });
 
+    //update x-, y-coordinates and radius for each trap according to factor
     traps.forEach(trap => {
         trap.x = trap.x * adjustingFactor;
         trap.y = trap.y * adjustingFactor;
         trap.radius = trap.radius * adjustingFactor;
     })
 
+    //update x-, y-coordinates and radius for the goal according to factor
     goal.x = goal.x * adjustingFactor;
     goal.y = goal.y * adjustingFactor;
     goal.radius = goal.radius * adjustingFactor;
 
+    //update x-, y-coordinates and radius for the ball according to factor
     ball.x = spawnpoint.x * adjustingFactor;
     ball.y = spawnpoint.y * adjustingFactor;
 }
@@ -499,3 +532,7 @@ function resizeCanvas() {
 }
 
 resizeCanvas();
+
+document.getElementById('level2Button').addEventListener('click', () => {
+    window.location.href = './level_2/level2.html'; // Weiter zu Level 2
+});

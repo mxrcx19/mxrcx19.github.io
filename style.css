@@ -39,15 +39,28 @@ ul {
     height: 100vh;
     background-color: #4caf50;
     color: white;
-    z-index: 2; /* Überlagert den Game Screen */
+    z-index: 3; /* Überlagert den Game Screen */
 }
 
 #gameScreen {
     width: 100vw;
     height: 100vh;
     position: relative;
-    z-index: 1; /* Liegt unter dem Startbildschirm */
+    z-index: 2; /* Liegt unter dem Startbildschirm */
 }
+
+#goalScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #4caf50;
+    color: white;
+    z-index: 1; /* Überlagert den Game Screen */
+}
+
+
 
 #startButton {
     margin-top: 20px;
@@ -71,19 +84,45 @@ canvas {
 }
 
 #topBar {
-    display: flex;              /* Elemente nebeneinander ausrichten */
-    justify-content: space-between; /* Platz zwischen den Elementen ausgleichen */
-    align-items: center;        /* Vertikal zentrieren */
-    width: 400px;               /* Gleiche Breite wie das Canvas */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 400px;
 }
 
 #timer {
-    font-size: 18px;            /* Schriftgröße des Timers */
-    font-weight: bold;          /* Fettgedruckter Timer */
+    font-size: 18px;
+    font-weight: bold;
 }
 
 #playPauseButton {
-    padding: 5px 10px;          /* Platz im Button */
-    font-size: 16px;            /* Schriftgröße */
-    cursor: pointer;            /* Mauszeiger als Klicksymbol */
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;            
+}
+
+#goal1Congrats {
+    font-size: larger;
+    font-weight: bold;
+    padding-bottom: 10px;
+}
+
+#goal1Question {
+    margin-top: 2rem;
+}
+
+
+#level2Button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#level2Button:hover {
+    background-color: #555;
 }
