@@ -143,6 +143,9 @@ let allCoinsCollected = false
 
 //array of all coins in the labyrinth
 const coins = [
+    {x: 16, y: 50, radius: 7, collected: false},
+    {x: 16, y: 70, radius: 7, collected: false}
+    /*
     {x: 136, y: 20, radius: 7, collected: false},
     {x: 346, y: 20, radius: 7, collected: false},
     {x: 46, y: 80, radius: 7, collected: false},
@@ -161,6 +164,7 @@ const coins = [
     {x: 436, y: 410, radius: 7, collected: false},
     {x: 76, y: 467, radius: 7, collected: false},
     {x: 106, y: 467, radius: 7, collected: false}
+    */
 ];
 
 //array of all traps in the labyrinth
@@ -298,11 +302,11 @@ function checkCoinCollision(ball) {
                 coins.forEach(coin => {
                     if (coin.collected == false) {
                         counter++;
-                        if (counter == 0) {
-                            allCoinsCollected = true;
-                        }
                     }
                 })
+                if (counter == 0) {
+                    allCoinsCollected = true;
+                }
                 coinCountElement.innerHTML = counter
             }
         }
