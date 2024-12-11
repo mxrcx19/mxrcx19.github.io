@@ -306,6 +306,7 @@ function checkCoinCollision(ball) {
                 })
                 if (counter == 0) {
                     allCoinsCollected = true;
+                    drawGoal(ctx);
                 }
                 coinCountElement.innerHTML = counter
             }
