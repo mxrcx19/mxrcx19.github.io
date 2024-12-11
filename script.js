@@ -274,7 +274,7 @@ function checkWallCollision(ball, wall) {
         ball.y - ball.radius <= wall.y + wall.height
     );
 }
-
+/*
 //check if all coins got collected to unlock goal
 function checkAllCoinsCollected() {
     allCoinsCollected = coins.every(coin => coin.collected);
@@ -282,7 +282,7 @@ function checkAllCoinsCollected() {
         console.log("Alle Coins eingesammelt! Ziel wird sichtbar.");
     }
 }
-
+*/
 //check if new ball position is colliding with a wall
 function checkCoinCollision(ball) {
     coins.forEach(coin => {
@@ -298,6 +298,9 @@ function checkCoinCollision(ball) {
                 coins.forEach(coin => {
                     if (coin.collected == false) {
                         counter++;
+                        if (counter == 0) {
+                            allCoinsCollected = true;
+                        }
                     }
                 })
                 coinCountElement.innerHTML = counter
@@ -380,7 +383,7 @@ function gameLoop() {
     checkCoinCollision(ball);
     drawCoins(ctx);
     drawTraps(ctx);
-    checkAllCoinsCollected();
+    //checkAllCoinsCollected();
     drawGoal(ctx);
     drawBall();
 
