@@ -237,13 +237,11 @@ function drawTraps(ctx) {
 
 //draw the goal green if all coins got collected, otherwise black and therefore invisible
 function drawGoal(ctx) {
-    if (allCoinsCollected) {
-        ctx.beginPath();
-        ctx.arc(goal.x, goal.y, goal.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#00F700";
-        ctx.fill();
-        ctx.closePath();
-    }
+    ctx.beginPath();
+    ctx.arc(goal.x, goal.y, goal.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "#00F700";
+    ctx.fill();
+    ctx.closePath();
 }
 
 //draw the red ball
@@ -306,6 +304,7 @@ function checkCoinCollision(ball) {
                 })
                 if (counter == 0) {
                     allCoinsCollected = true;
+                    drawGoal(ctx);
                 }
                 coinCountElement.innerHTML = counter
             }
@@ -387,7 +386,9 @@ function gameLoop() {
     checkCoinCollision(ball);
     drawCoins(ctx);
     drawTraps(ctx);
-    drawGoal(ctx);
+    if (allCoinsCollected) {
+        drawGoal(ctx);
+    }
     drawBall();
 
     requestAnimationFrame(gameLoop); // Animations-Loop
