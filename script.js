@@ -439,17 +439,6 @@ playPauseButton.onclick = function(e) {
     }
 }
 
-// Set canvas size to match screen size
-function resizeCanvas() {
-    if (window.innerWidth < 480) {
-        canvas.width = window.innerWidth - 10 ;
-        canvas.height = canvas.width;
-
-        //adjust size of gameobjects
-        adjustGameObjects();
-    }
-}
-
 // adjust size of game objects according to canvas size
 function adjustGameObjects() {
     const adjustingFactor = (canvas.width / 480)
@@ -479,6 +468,15 @@ function adjustGameObjects() {
     ball.y = spawnpoint.y * (canvas.height / 480);
 }
 
-// call the function when loading and when window gets resized
-window.addEventListener('resize', resizeCanvas);
+// Set canvas size to match screen size
+function resizeCanvas() {
+    if (window.innerWidth < 480) {
+        canvas.width = window.innerWidth - 10 ;
+        canvas.height = canvas.width;
+
+        //adjust size of gameobjects
+        adjustGameObjects();
+    }
+}
+
 resizeCanvas();
