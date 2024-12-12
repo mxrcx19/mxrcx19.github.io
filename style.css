@@ -87,7 +87,7 @@ canvas {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 400px;
+    width: 370px;
 }
 
 #timer {
@@ -125,4 +125,11 @@ canvas {
 
 #level2Button:hover {
     background-color: #555;
+}
+
+#level2Screen {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    z-index: 2; /* Liegt unter dem Startbildschirm */
 }

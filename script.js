@@ -16,7 +16,7 @@ const goal = { x: 465, y: 466, radius: 10};
 const walls = [
     { x: 0, y: 0, width: 4, height: 480 }, // left wall of canvas
     { x: 0, y: 0, width: 480, height: 1 }, // upper wall of canvas
-    { x: 476, y: 0, width: 4, height: 456 }, // right wall of canvas
+    { x: 476, y: 0, width: 4, height: 480 }, // right wall of canvas
     { x: 0, y: 476, width: 480, height: 4 }, // lower wall of canvas
     //walls in the labyrinth
     { x: 30, y: 1, width: 480, height: 4 },

@@ -1,6 +1,3 @@
-//import of important functions
-import { drawWalls } from "../gameUtils";
-
 //select elements
 const canvas = document.getElementById('level2Canvas');
 const ctx = canvas.getContext('2d');
@@ -13,21 +10,31 @@ const goal = { x: 286, y: 16, radius: 10 };
 
 const ballButton = { x: 46, y: 437, radius: 10, pressed: false };
 
+const platform = { 
+    x: 211, 
+    xStart: 211,
+    xEnd: 300, 
+    y: 241,
+    xEnd: 300,
+    width: 30, 
+    height: 30, 
+    speed: 0.4, 
+    direction: 1,
+    delay: 40
+};
+
 const portals = [
-    { x: 465, y: 47, radius: 10 },
-    { x: 106, y: 287, radius: 10 },
-    { x: 226, y: 317, radius: 10 },
-    { x: 196, y: 465, radius: 10 }
+    { x: 465, y: 47, radius: 10, destX: 76, destY: 287 },
+    { x: 106, y: 287, radius: 10, destX: 465, destY: 16 },
+    { x: 226, y: 317, radius: 10, destX: 226, destY: 465},
+    { x: 196, y: 465, radius: 10, destX: 226, destY: 347}
 ];
 
 const abysses = [
     { x: 30,y: 2, width: 120, height: 39},
     { x: 30,y: 52, width: 120, height: 39},
     { x: 331, y: 2, width: 120, height: 29},
-    { x: 212, y: 212, width: 29, height: 88},
-    { x: 241, y: 212, width: 30, height: 88},
-    { x: 271, y: 212, width: 30, height: 88},
-    { x: 301, y: 212, width: 29, height: 88},
+    { x: 212, y: 212, width: 118, height: 88}
 ];
 
 const walls = [
@@ -130,8 +137,7 @@ const walls = [
     { x: 450, y: 300, width: 2, height: 122 },
 ];
 
-const traps = [];
-
+let allCoinsCollected = false;
 const coins = [];
 
 function drawBall() {
@@ -140,6 +146,11 @@ function drawBall() {
     ctx.fillStyle = "red";
     ctx.fill();
     ctx.closePath();
+}
+
+function drawPlatform(ctx) {
+    ctx.fillStyle = "white"; // Farbe der Plattform
+    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
 }
 
 function drawGoal(ctx) {
@@ -207,6 +218,13 @@ function drawAbysses(ctx) {
     });
 }
 
+function drawWalls(ctx) {
+    ctx.fillStyle = "grey";
+    walls.forEach(wall => {
+        ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+    });
+}
+
 function drawCoins(ctx) {
     coins.forEach(coin => {
         if (!coin.collected) {
@@ -236,35 +254,221 @@ function drawCoins(ctx) {
     });
 }
 
-function drawTraps(ctx) {
-    traps.forEach(trap => {
-        //draw black outline
-        ctx.beginPath();
-        ctx.arc(trap.x, trap.y, trap.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "black";
-        ctx.fill();
-        ctx.closePath();
+function handleKeyPress(e) {
+    let dx = 0, dy = 0;
+    const speed = 8;
 
-        //purple filling
-        ctx.beginPath();
-        ctx.arc(trap.x, trap.y, trap.radius - 2, 0, Math.PI * 2);
-        ctx.fillStyle = "#6B3FA0";
-        ctx.fill();
-        ctx.closePath();
+    if (e.key === "ArrowUp") dy = -speed;
+    if (e.key === "ArrowDown") dy = speed;
+    if (e.key === "ArrowLeft") dx = -speed;
+    if (e.key === "ArrowRight") dx = speed;
+
+    updateBallPosition(ball, dx, dy)
+}
+// Simulate movement with arrow keys
+window.addEventListener('keydown', handleKeyPress);
+
+window.addEventListener('keyup', () => {
+    ball.vx = 0;
+    ball.vy = 0;
+});
+
+//function to check whether ball and wall collide
+function checkWallCollision(ball, wall) {
+    return (
+        ball.x + ball.radius >= wall.x &&
+        ball.x - ball.radius <= wall.x + wall.width &&
+        ball.y + ball.radius >= wall.y &&
+        ball.y - ball.radius <= wall.y + wall.height
+    );
+}
+//checks if the ball fell into an abyss
+function checkAbyssCollision(abyss) {
+    const inAbyssX = ball.x > abyss.x && ball.x < abyss.x + abyss.width;
+    const inAbyssY = ball.y > abyss.y && ball.y < abyss.y + abyss.height;
+    const ballOnPlatformX = ball.x > platform.x && ball.x < platform.x + platform.width;
+    const ballOnPlatformY = ball.y > platform.y && ball.y < platform.y + platform.height;
+
+    return ((inAbyssX && inAbyssY) && !(ballOnPlatformX && ballOnPlatformY));
+}
+
+//updates the coinCounter
+function updateCoinCount() {
+    let coinCountElement = document.getElementById("coinCounter2");
+    let counter = 0;
+    //count every coin not collected yet
+    coins.forEach(coin => {
+        if (coin.collected == false) {
+            counter++;
+        }
+    })
+    //if all coins are collected set allCoinsCollected true and draw the goal
+    if (counter == 0) {
+        allCoinsCollected = true;
+        drawGoal(ctx);
+    }
+    //update counter in document
+    coinCountElement.innerHTML = counter
+}
+
+//check if new ball position is colliding with a wall
+function checkCoinCollision(ball) {
+    coins.forEach(coin => {
+        //check the distance for every coin
+        if (!coin.collected) {
+            const distX = ball.x - coin.x;
+            const distY = ball.y - coin.y;
+            const distance = Math.sqrt(distX * distX + distY * distY);
+
+            //if ball touches coin, set collected to true and update the coin-count
+            if (distance < ball.radius + coin.radius) {
+                coin.collected = true;
+                updateCoinCount();
+            }
+        }
+    });
+}
+
+//check if the ball touches the goal
+function checkGoalCollision() {
+    const distX = ball.x - goal.x;
+    const distY = ball.y - goal.y;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    return (distance <= goal.radius);
+}
+//checks if the ball pressed the button
+function checkBallButtonCollision() {
+    const distX = ball.x - goal.x;
+    const distY = ball.y - goal.y;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    return (distance <= goal.radius);
+}
+
+function checkPortalCollision(portal) {
+    const distX = ball.x - portal.x;
+    const distY = ball.y - portal.y;
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    return (distance < portal.radius);
+}
+
+//updates ball position depending on input and position
+function updateBallPosition(ball, dx, dy ) {
+    const newX = ball.x + dx;
+    const newY = ball.y + dy;
+
+    let collisionX = false;
+    let collisionY = false;
+
+    //Iterate over all walls to check for collision
+    for (const wall of walls) {
+        //check if moving along x-axis is blocked by wall
+        if (checkWallCollision({ x: newX, y: ball.y, radius: ball.radius }, wall)) {
+            collisionX = true;
+        }
+        //check if moving along y-axis is blocked by wall
+        if (checkWallCollision({ x: ball.x, y: newY, radius: ball.radius }, wall)) {
+            collisionY = true;
+        }
+
+        // Breche die Schleife ab, wenn beide Kollisionen erkannt wurden
+        if (collisionX && collisionY) {
+            break;
+        }
+    }
+    // Bewege den Ball nur, wenn keine Kollision erkannt wurde
+    if (!collisionX) {
+        ball.x = newX;
+    }
+    if (!collisionY) {
+        ball.y = newY;
+    }
+    abysses.forEach(abyss => {
+        if (checkAbyssCollision(abyss)) {
+        ball.x = spawnpoint.x;
+        ball.y = spawnpoint.y;
+    }
     })
     
+
+    if (checkBallButtonCollision()) {
+        ballButton.pressed = true;
+        //move abyss to make path possible
+        abysses[2].y = abysses[2].y + 30 * (canvas.width / 480);
+    }
+
+    portals.forEach(portal => {
+        if (checkPortalCollision(portal)) {
+            if (portal == portals[0]) {
+                ball.x = portal[0].destX;
+                ball.y = portal[0].destY;
+            } else if (portal == portals[1]) {
+                ball.x = portal[1].destX;
+                ball.y = portal[1].destY;
+            } else if (portal == portals[2]) {
+                ball.x = portal[2].destX;
+                ball.y = portal[2].destY;
+            } else {
+                ball.x = portal[3].destX;
+                ball.y = portal[3].destY;
+            }
+        }
+    })
+
+    //if all coins are collected and ball touches goal, then change screen to goalScreen
+    if (allCoinsCollected) {
+        if (checkGoalCollision()) {
+            gameScreen.classList.remove('visible');
+            goalScreen.classList.add('visible');
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("goalScreen").style.display = "flex";
+        }
+    }
+}
+
+let vx = 0, vy = 0;
+//take inputs from accelerometer and calculate new position of the ball
+function handleMotion(event) {
+    //read-only x and y values of the accelerometer
+    const ax = event.accelerationIncludingGravity.x;
+    const ay = event.accelerationIncludingGravity.y;
+    //Low-Pass-Filter
+    vx = vx * 0.8 + ax * 0.2
+    vy = vy * 0.8 + ay * 0.2
+
+    updateBallPosition(ball, vx * 0.5, vy * -0.5)
+}
+
+function updatePlatformPosition() {
+    platform.x += platform.speed * platform.direction;
+
+    if (platform.x < platform.xStart || platform.x > platform.xEnd) {
+        if (platform.delay > 0 ) {
+            platform.delay = platform.delay - 1;
+            platform.speed = 0;
+        } else {
+            platform.direction *= -1;
+            platform.delay = 40;
+            platform.speed = 0.4;
+        }
+    }
 }
 
 function gameLoop() {
     //update canvas by deleting and redrawing the elements
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawWalls(ctx, walls);
+    drawWalls(ctx);
     //checkCoinCollision(ball);
     //drawCoins(ctx);
     drawAbysses(ctx);
     drawPortals(ctx);
     drawBallButton(ctx);
-    //drawTraps(ctx);
+    if (isRunning) {
+        updatePlatformPosition();
+    }
+    drawPlatform(ctx);
     /*
     if (allCoinsCollected) {
         drawGoal(ctx);
@@ -275,10 +479,124 @@ function gameLoop() {
     requestAnimationFrame(gameLoop); // Animations-Loop
 }
 
+let timer = 180; //seconds
+//function starts timer and counts down the seconds
+function startTimer() {
+    const interval = setInterval(() => {
+        if (isRunning) {
+            timer--;
+            let timerElement = document.getElementById("timer2");
+            timerElement.innerHTML = timer;
+            //if time is over, display alert
+            if (timer <= 0) {
+            clearInterval(interval);
+            alert('Zeit abgelaufen! Versuch es noch einmal.');
+            }
+        }
+    }, 1000);
+}
+
 function startGame() {
+    startTimer();
     gameLoop();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     startGame(); // Startet das Spiel automatisch beim Laden der Seite
 });
+
+let isRunning = true;
+let playPauseButton = document.getElementById("playPauseButton2");
+playPauseButton.onclick = function(e) {
+    e.preventDefault();
+
+    if (isRunning) {
+        //if game is running, remove event-listeners to prevent movement of the ball, change wording of button and set isRunning to false
+        window.removeEventListener("devicemotion", handleMotion);
+        window.removeEventListener('keydown', handleKeyPress);
+        playPauseButton.innerHTML = "Weiter";
+        isRunning = false;
+    } else {
+        //otherwise, add event-listeners to enable movement of the ball, change wording of the button and set isRunning to true
+        window.addEventListener("devicemotion", handleMotion);
+        window.addEventListener('keydown', handleKeyPress);
+        playPauseButton.innerHTML = "Pause";
+        isRunning = true;
+    }
+}
+
+// adjust size of game objects according to canvas size
+function adjustGameObjects() {
+    //calculate factor depending on canvas width
+    const adjustingFactor = (canvas.width / 480)
+    walls.forEach(wall => {
+        //update x- and y-coordinates for each wall according to factor
+        wall.x = wall.x * adjustingFactor;
+        wall.y = wall.y * adjustingFactor;
+        //update width or height for each wall according to factor, depending on whether wall is placed horizontally or vertically
+        if (wall.width == 2) {
+            wall.height = wall.height * adjustingFactor;
+        } else if (wall.height == 2) {
+            wall.width = wall.width * adjustingFactor;
+        }
+    });
+
+    //update x-, y-coordinates and radius for each coin according to factor
+    coins.forEach(coin => {
+        coin.x = coin.x * adjustingFactor;
+        coin.y = coin.y * adjustingFactor;
+        coin.radius = coin.radius * adjustingFactor;
+    });
+
+    //update portals
+    portals.forEach(portal => {
+        portal.x = portal.x * adjustingFactor;
+        portal.y = portal.y * adjustingFactor;
+        portal.radius = portal.radius * adjustingFactor;
+        portal.destX = portal.destX * adjustingFactor;
+        portal.destY = portal.destY * adjustingFactor;
+    })
+
+    //update abysses
+    abysses.forEach(abyss => {
+        abyss.x = abyss.x * adjustingFactor;
+        abyss.y = abyss.y * adjustingFactor;
+        abyss.width = abyss.width * adjustingFactor;
+        abyss.height = abyss.height * adjustingFactor;
+    })
+
+    //update ballButton
+    ballButton.x = ballButton.x * adjustingFactor;
+    ballButton.y = ballButton.y * adjustingFactor;
+    ballButton.radius = ballButton.radius * adjustingFactor;
+
+    //update moving plattform
+    platform.x = platform.x * adjustingFactor;
+    platform.xStart = platform.xStart * adjustingFactor;
+    platform.xEnd = platform.xEnd * adjustingFactor;
+    platform.y = platform.y * adjustingFactor;
+    platform.width = platform.width * adjustingFactor;
+    platform.height = platform.height * adjustingFactor;
+
+    //update x-, y-coordinates and radius for the goal according to factor
+    goal.x = goal.x * adjustingFactor;
+    goal.y = goal.y * adjustingFactor;
+    goal.radius = goal.radius * adjustingFactor;
+
+    //update x-, y-coordinates and radius for the ball according to factor
+    ball.x = spawnpoint.x * adjustingFactor;
+    ball.y = spawnpoint.y * adjustingFactor;
+}
+
+// Set canvas size to match screen size
+function resizeCanvas() {
+    if (window.innerWidth < 480) {
+        canvas.width = window.innerWidth - 40 ;
+        canvas.height = canvas.width;
+
+        //adjust size of gameobjects
+        adjustGameObjects();
+    }
+}
+
+resizeCanvas();
