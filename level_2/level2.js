@@ -506,11 +506,9 @@ function gameLoop() {
         updatePlatformPosition();
     }
     drawPlatform(ctx);
-    /*
     if (allCoinsCollected) {
         drawGoal(ctx);
     }
-        */
     drawBall();
 
     requestAnimationFrame(gameLoop); // Animations-Loop
