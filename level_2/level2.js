@@ -47,9 +47,9 @@ const walls = [
     { x: 0, y: 390, width: 90, height: 2 },
     { x: 30, y: 120, width: 120, height: 2 },
     { x: 30, y: 180, width: 60, height: 2 },
-    { x: 30, y: 210, width: 150, height: 2 },
+    { x: 30, y: 210, width: 180, height: 2 },
     { x: 30, y: 240, width: 60, height: 2 },
-    { x: 30, y: 300, width: 120, height: 2 },
+    { x: 30, y: 300, width: 150, height: 2 },
     { x: 30, y: 360, width: 30, height: 2 },
     { x: 30, y: 420, width: 120, height: 2 },
     { x: 30, y: 120, width: 2, height: 90 },
@@ -74,18 +74,21 @@ const walls = [
     { x: 150, y: 240, width: 2, height: 62 },
     { x: 150, y: 360, width: 2, height: 62 },
     { x: 180, y: 30, width: 30, height: 2 },
+    { x: 180, y: 90, width: 30, height: 2 },
     { x: 180, y: 270, width: 30, height: 2 },
     { x: 180, y: 360, width: 90, height: 2 },
-    { x: 180, y: 30, width: 2, height: 152 },
+    { x: 180, y: 30, width: 2, height: 182 },
     { x: 180, y: 360, width: 2, height: 120 },
     { x: 210, y: 90, width: 120, height: 2 },
     { x: 210, y: 120, width: 60, height: 2 },
+    { x: 210, y: 180, width: 30, height: 2 },
     { x: 210, y: 210, width: 120, height: 2 },
     { x: 210, y: 300, width: 120, height: 2 },
     { x: 210, y: 390, width: 90, height: 2 },
     { x: 210, y: 420, width: 240, height: 2 },
     { x: 210, y: 30, width: 2, height: 30 },
     { x: 210, y: 90, width: 2, height: 30 },
+    { x: 210, y: 150, width: 2, height: 30 },
     { x: 210, y: 210, width: 2, height: 32 },
     { x: 210, y: 270, width: 2, height: 62 },
     { x: 210, y: 390, width: 2, height: 30 },
@@ -138,7 +141,41 @@ const walls = [
 ];
 
 let allCoinsCollected = false;
-const coins = [];
+const coins = [
+    { x: 16, y: 16, radius: 7, collected: false },
+    { x: 256, y: 16, radius: 7, collected: false },
+    { x: 286, y: 16, radius: 7, collected: false },
+    { x: 316, y: 16, radius: 7, collected: false },
+    { x: 16, y: 46, radius: 7, collected: false },
+    { x: 166, y: 46, radius: 7, collected: false },
+    { x: 226, y: 46, radius: 7, collected: false },
+    { x: 16, y: 76, radius: 7, collected: false },
+    { x: 466, y: 76, radius: 7, collected: false },
+    { x: 16, y: 106, radius: 7, collected: false },
+    { x: 256, y: 106, radius: 7, collected: false },
+    { x: 76, y: 136, radius: 7, collected: false },
+    { x: 106, y: 136, radius: 7, collected: false },
+    { x: 256, y: 136, radius: 7, collected: false },
+    { x: 316, y: 136, radius: 7, collected: false },
+    { x: 436, y: 166, radius: 7, collected: false },
+    { x: 166, y: 196, radius: 7, collected: false },
+    { x: 196, y: 196, radius: 7, collected: false },
+    { x: 106, y: 226, radius: 7, collected: false },
+    { x: 166, y: 256, radius: 7, collected: false },
+    { x: 376, y: 256, radius: 7, collected: false },
+    { x: 136, y: 286, radius: 7, collected: false },
+    { x: 256, y: 316, radius: 7, collected: false },
+    { x: 76, y: 346, radius: 7, collected: false },
+    { x: 156, y: 346, radius: 7, collected: false },
+    { x: 406, y: 346, radius: 7, collected: false },
+    { x: 16, y: 376, radius: 7, collected: false },
+    { x: 256, y: 406, radius: 7, collected: false },
+    { x: 16, y: 436, radius: 7, collected: false },
+    { x: 166, y: 436, radius: 7, collected: false },
+    { x: 316, y: 436, radius: 7, collected: false },
+    { x: 406, y: 466, radius: 7, collected: false },
+    { x: 436, y: 466, radius: 7, collected: false }
+];
 
 function drawBall() {
     ctx.beginPath();
@@ -460,8 +497,8 @@ function gameLoop() {
     //update canvas by deleting and redrawing the elements
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawWalls(ctx);
-    //checkCoinCollision(ball);
-    //drawCoins(ctx);
+    checkCoinCollision(ball);
+    drawCoins(ctx);
     drawAbysses(ctx);
     drawPortals(ctx);
     drawBallButton(ctx);
