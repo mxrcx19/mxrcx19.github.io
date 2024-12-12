@@ -231,7 +231,6 @@ function drawTraps(ctx) {
         ctx.fill();
         ctx.closePath();
     })
-    
 }
 
 //draw the goal green if all coins got collected, otherwise black and therefore invisible
