@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="../style.css">
 </head>
 <body>
+    <!-- Canvas Level 2 -->
     <div id="level2screen" class="screen visible">
         <div id="topBar">
             <p>Timer: <span id="timer2">180</span></p>
@@ -14,6 +15,17 @@
             <button id="playPauseButton2">Pause</button>
         </div>
         <canvas id="level2Canvas" width="480" height="480"></canvas>
+    </div>
+
+    <!-- Screen after completing the second level -->
+    <div id="goalScreen" class="screen">
+        <p id="goalCongrats">Glückwunsch! Du hast das zweite und damit letzte Level geschafft.</p>
+    </div>
+
+    <!-- Screen after losing second level -->
+    <div id="losingScreen" class="screen">
+        <p>Das Zeit ist abgelaufen. Willst du es nochmal versuchen?</p>
+        <button id="restartButton" class="buttonDesign">Neustart</button>
     </div>
     <script src="./level2.js"></script>
 </body>

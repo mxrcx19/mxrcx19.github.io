@@ -1,6 +1,11 @@
 //select elements
 const canvas = document.getElementById('level2Canvas');
 const ctx = canvas.getContext('2d');
+const gameScreen = document.getElementById('level2Screen');
+const goalScreen = document.getElementById('goalScreen');
+const losingScreen = document.getElementById('losingScreen');
+
+const timeLimit = 180;
 
 const spawnpoint = {x: 16, y: 226};
 
@@ -514,7 +519,7 @@ function gameLoop() {
     requestAnimationFrame(gameLoop); // Animations-Loop
 }
 
-let timer = 180; //seconds
+let timer = timeLimit; //seconds
 //function starts timer and counts down the seconds
 function startTimer() {
     const interval = setInterval(() => {
@@ -525,7 +530,12 @@ function startTimer() {
             //if time is over, display alert
             if (timer <= 0) {
             clearInterval(interval);
-            alert('Zeit abgelaufen! Versuch es noch einmal.');
+            window.removeEventListener("devicemotion", handleMotion);
+            window.removeEventListener('keydown', handleKeyPress);
+            gameScreen.classList.remove('visible');
+            losingScreen.classList.add('visible');
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("losingScreen").style.display = "flex";
             }
         }
     }, 1000);
@@ -635,3 +645,27 @@ function resizeCanvas() {
 }
 
 resizeCanvas();
+
+document.getElementById('restartButton').addEventListener('click'), () => {
+    ball.x = spawnpoint.x;
+    ball.y = spawnpoint.y;
+
+    allCoinsCollected = false;
+    coins.forEach(coin => {
+        coin.collected = false;
+    })
+    updateCoinCount();
+
+    ballButton.pressed = false;
+
+    window.addEventListener("devicemotion", handleMotion);
+    window.addEventListener('keydown', handleKeyPress);
+
+    losingScreen.classList.remove('visible');
+    gameScreen.classList.add('visible');
+    document.getElementById("losingScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "flex";
+
+    timer = timeLimit;
+    startTimer();
+}

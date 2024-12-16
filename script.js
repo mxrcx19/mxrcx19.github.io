@@ -1,10 +1,13 @@
 // select elements
 const startScreen = document.getElementById('startScreen');
 const gameScreen = document.getElementById('gameScreen');
-const goalScreen = document.getElementById('goalScreen')
+const goalScreen = document.getElementById('goalScreen');
+const losingScreen = document.getElementById('losingScreen')
 const startButton = document.getElementById('startButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
+const timeLimit = 180;
 
 const spawnpoint = { x: 16, y: 10}
 
@@ -418,7 +421,7 @@ function gameLoop() {
 
 
 
-let timer = 180; //seconds
+let timer = timeLimit; //seconds
 //function starts timer and counts down the seconds
 function startTimer() {
     const interval = setInterval(() => {
@@ -429,7 +432,12 @@ function startTimer() {
             //if time is over, display alert
             if (timer <= 0) {
             clearInterval(interval);
-            alert('Zeit abgelaufen! Versuch es noch einmal.');
+            window.removeEventListener("devicemotion", handleMotion);
+            window.removeEventListener('keydown', handleKeyPress);
+            gameScreen.classList.remove('visible');
+            losingScreen.classList.add('visible');
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("losingScreen").style.display = "flex";
             }
         }
     }, 1000);
@@ -535,3 +543,25 @@ resizeCanvas();
 document.getElementById('level2Button').addEventListener('click', () => {
     window.location.href = './level_2/level2.html'; // Weiter zu Level 2
 });
+
+document.getElementById('restartButton').addEventListener('click'), () => {
+    ball.x = spawnpoint.x;
+    ball.y = spawnpoint.y;
+
+    allCoinsCollected = false;
+    coins.forEach(coin => {
+        coin.collected = false;
+    })
+    updateCoinCount();
+
+    window.addEventListener("devicemotion", handleMotion);
+    window.addEventListener('keydown', handleKeyPress);
+
+    losingScreen.classList.remove('visible');
+    gameScreen.classList.add('visible');
+    document.getElementById("losingScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "flex";
+
+    timer = timeLimit;
+    startTimer();
+}

@@ -17,10 +17,10 @@
             <li>Wenn der Spieler das Ziel erreicht ist das Spiel zu Ende</li>
         </ul>
         <p>Klicke auf den Button, um zu starten!</p>
-        <button id="startButton">Spiel starten</button>
+        <button id="startButton" class="buttonDesign">Spiel starten</button>
     </div>
 
-    <!-- Labyrinth -->
+    <!-- Canvas Level 1 -->
     <div id="gameScreen" class="screen">
         <div id="topBar">
             <p>Timer: <span id="timer">180</span></p>
@@ -30,11 +30,17 @@
         <canvas id="gameCanvas" width="480" height="480"></canvas>
     </div>
 
-    <!-- Bildschirm nachdem erstes Level geschafft -->
+    <!-- Screen after completing first level -->
     <div id="goalScreen" class="screen">
-        <p id="goal1Congrats">Glückwunsch! Du hast das erste Level geschafft.</p>
+        <p id="goalCongrats">Glückwunsch! Du hast das erste Level geschafft.</p>
         <p id="goal1Question">Willst du ins zweite Level?</p>
-        <button id="level2Button">Level 2</button>
+        <button id="level2Button" class="buttonDesign">Level 2</button>
+    </div>
+
+    <!-- Screen after losing first level -->
+    <div id="losingScreen" class="screen">
+        <p>Das Zeit ist abgelaufen. Willst du es nochmal versuchen?</p>
+        <button id="restartButton" class="buttonDesign">Neustart</button>
     </div>
     <script src="./script.js"></script>
 </body>

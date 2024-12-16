@@ -60,9 +60,20 @@ ul {
     z-index: 1; /* Überlagert den Game Screen */
 }
 
+#losingScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #4caf50;
+    color: white;
+    z-index: 1; /* Überlagert den Game Screen */
+}
 
 
-#startButton {
+
+.buttonDesign {
     margin-top: 20px;
     padding: 10px 20px;
     background-color: #333;
@@ -101,7 +112,7 @@ canvas {
     cursor: pointer;            
 }
 
-#goal1Congrats {
+#goalCongrats {
     font-size: larger;
     font-weight: bold;
     padding-bottom: 10px;
@@ -109,6 +120,12 @@ canvas {
 
 #goal1Question {
     margin-top: 2rem;
+}
+
+#losingScreen {
+    font-size: larger;
+    font-weight: bold;
+    padding-bottom: 10px;
 }
 
 
