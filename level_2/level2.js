@@ -393,7 +393,7 @@ function checkPortalCollision(portal) {
     const distY = ball.y - portal.y;
     const distance = Math.sqrt(distX * distX + distY * distY);
 
-    return (distance < portal.radius);
+    return (distance <= portal.radius);
 }
 
 //updates ball position depending on input and position
@@ -443,19 +443,8 @@ function updateBallPosition(ball, dx, dy ) {
 
     portals.forEach(portal => {
         if (checkPortalCollision(portal)) {
-            if (portal == portals[0]) {
-                ball.x = portal[0].destX;
-                ball.y = portal[0].destY;
-            } else if (portal == portals[1]) {
-                ball.x = portal[1].destX;
-                ball.y = portal[1].destY;
-            } else if (portal == portals[2]) {
-                ball.x = portal[2].destX;
-                ball.y = portal[2].destY;
-            } else {
-                ball.x = portal[3].destX;
-                ball.y = portal[3].destY;
-            }
+            ball.x = portal.destX;
+            ball.y = portal.destY;
         }
     })
 
@@ -542,6 +531,7 @@ function startTimer() {
 }
 
 function startGame() {
+    window.addEventListener("devicemotion", handleMotion);
     startTimer();
     gameLoop();
 }
